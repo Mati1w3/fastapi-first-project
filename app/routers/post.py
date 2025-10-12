@@ -1,10 +1,11 @@
 from app.routers import user
 from .. import models, schemas, oauth2
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, contains_eager
 from ..database import get_db
 from typing import List, Optional
-from sqlalchemy import func
+from sqlalchemy import func, select, literal_column
+
 
 
 router = APIRouter(
@@ -33,12 +34,29 @@ def get_posts(db: Session = Depends(get_db),
     # posts = db.query(models.Post).filter(
     #     models.Post.title.contains(search)).limit(limit).offset(skip).all()
     
-    results = db.query(models.Post, func.count(models.Vote.post_id).label("likes")).join(
-        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(
-            models.Post.id).filter(
-                models.Post.title.contains(search)).limit(limit).offset(skip).all()
- 
-    return results
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("likes")).options(
+        joinedload(models.Post.comments)
+    ).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True
+    ).group_by(
+        models.Post.id
+    ).filter(
+        models.Post.title.contains(search)
+    ).limit(limit).offset(skip).all()
+    
+   
+    return [
+        {
+            "Post": post_orm_object,
+            "likes": likes_count,
+            "comments_count": len(post_orm_object.comments),
+            "comments": post_orm_object.comments
+        } 
+        for post_orm_object, likes_count in results
+    ]
+     
+    
+    
 
 
 
@@ -52,14 +70,29 @@ def get_post(id: int,
     # post = cursor.fetchone()
     # post = db.query(models.Post).filter(models.Post.id == id).first()
 
-    results = db.query(models.Post, func.count(models.Vote.post_id).label("likes")).join(
-        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(
-            models.Post.id).filter(models.Post.id == id).first()
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("likes")).options(
+        joinedload(models.Post.comments)
+    ).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True
+    ).group_by(
+        models.Post.id 
+    ).filter(
+        models.Post.id == id
+    ).first()
+
     
     if results == None: 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"post with id: {id} was not found")
-    return results
+    post_orm_object, likes_count = results 
+    comments_list = post_orm_object.comments
+    comments_count_final = len(comments_list)
+    return {
+        "Post": post_orm_object,
+        "likes": likes_count,
+        "comments_count": comments_count_final,
+        "comments": post_orm_object.comments
+    }
   
 #create post
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)

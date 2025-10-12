@@ -5,7 +5,8 @@ import psycopg2  #  PostgreSQL database adapter for Python
 from psycopg2.extras import RealDictCursor  #  Fetches rows from PostgreSQL as dictionaries
 import time  #  Used for sleep/retry logic (e.g. waiting for DB connection)
 from sqlalchemy.orm import Session
-from app.oauth2 import ALGORITHM  #  SQLAlchemy ORM session for database interactions
+from app.oauth2 import ALGORITHM
+from app.routers import comments  #  SQLAlchemy ORM session for database interactions
 from . import models, schemas, utils   #  Local app modules for database models and Pydantic schemas
 from .database import engine, get_db  #  Database engine and dependency for DB session
 from .routers import post, user, auth, vote
@@ -37,6 +38,7 @@ app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(vote.router)
+app.include_router(comments.router)
 #main page
 @app.get("/") # decorators are used to add metadata to functions
 def root():

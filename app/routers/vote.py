@@ -28,7 +28,7 @@ def vote(vote: schemas.Vote,
         return {"message": "successfully added vote"}
     else:
         if not found_vote:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"vote does not exist")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="vote does not exist")
         vote_query.delete(synchronize_session=False)
         db.commit()
         return {"message": "successfully deleted vote"}
