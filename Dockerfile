@@ -1,5 +1,13 @@
 FROM python:3.13.6
 
+RUN apt-get update && apt-get install -y \
+    netcat-openbsd \
+    # Upewnij się, że masz też poniższe, jeśli używasz psycopg2 z kompilacją:
+    # libpq-dev \ 
+    # gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /app
 
 COPY requirements.txt ./
