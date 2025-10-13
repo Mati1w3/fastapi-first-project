@@ -3,7 +3,6 @@ from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 from typing import  List
 
-from app.models import User
 
 
 class UserOut(BaseModel):
