@@ -1,5 +1,5 @@
 from .database import Base 
-from sqlalchemy import TIMESTAMP, Column, Integer, String, Boolean, text, ForeignKey, func
+from sqlalchemy import TIMESTAMP, Column, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 class Post(Base):

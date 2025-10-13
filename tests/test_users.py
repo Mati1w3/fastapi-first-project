@@ -1,4 +1,3 @@
-from urllib import response
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -9,3 +8,4 @@ def test_root():
     print(response.json().get("message"))
     assert response.json().get("message") == "gigga nigga"
     assert response.status_code == 200
+

@@ -1,8 +1,7 @@
-from tarfile import LinkFallbackError
-import email_validator
+
 from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
-from typing import Optional, List
+from typing import  List
 
 from app.models import User
 

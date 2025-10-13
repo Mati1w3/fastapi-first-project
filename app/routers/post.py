@@ -1,10 +1,9 @@
-from app.routers import user
 from .. import models, schemas, oauth2
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from sqlalchemy.orm import Session, joinedload, contains_eager
+from fastapi import status, HTTPException, Depends, APIRouter
+from sqlalchemy.orm import Session, joinedload
 from ..database import get_db
-from typing import List, Optional
-from sqlalchemy import func, select, literal_column
+from typing import Optional
+from sqlalchemy import func
 
 
 
@@ -81,7 +80,7 @@ def get_post(id: int,
     ).first()
 
     
-    if results == None: 
+    if results is None: 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"post with id: {id} was not found")
     post_orm_object, likes_count = results 
@@ -126,7 +125,7 @@ def update_post(id: int,
     updated_post = db.query(models.Post).filter(models.Post.id == id)
 
     
-    if updated_post.first() == None:
+    if updated_post.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"post with id: {id} does not exist")
     
@@ -151,7 +150,7 @@ def delete_post(id: int,
     post = post_query.first()
     
 
-    if post == None:
+    if post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not exist")
     
     if post.owner_id != current_user.id:
