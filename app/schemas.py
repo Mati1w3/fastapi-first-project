@@ -13,8 +13,8 @@ class UserOut(BaseModel):
     email: EmailStr
 
     # converting pydantic model to dict
-    class Config:
-        orm_mode = ConfigDict(from_attributes=True)
+
+    model_config  = ConfigDict(from_attributes=True)
 
 
 class PostBase(BaseModel):
@@ -30,8 +30,8 @@ class CommentOut(BaseModel):
     owner_id: int
 
     # converting pydantic model to dict
-    class Config:
-        orm_mode = ConfigDict(from_attributes=True)
+   
+    model_config  = ConfigDict(from_attributes=True)
 
 
 class CommentCreate(BaseModel):
@@ -63,8 +63,8 @@ class Post(PostBase):  # controlling the output data
     owner: UserOut
 
     # converting pydantic model to dict
-    class Config:
-        orm_mode = ConfigDict(from_attributes=True)
+  
+    model_config  = ConfigDict(from_attributes=True)
 
 
 class PostOut(BaseModel):
