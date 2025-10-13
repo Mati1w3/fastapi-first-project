@@ -42,4 +42,4 @@ app.include_router(comments.router)
 #main page
 @app.get("/") # decorators are used to add metadata to functions
 def root():
-    return {"message": "nigga"}
+    return {"message": "gigga nigga"}
