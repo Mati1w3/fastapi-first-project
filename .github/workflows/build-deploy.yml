@@ -73,8 +73,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:latest
-          cache-from: type=local,mode=max,enable=true,target=/var/cache/docker
-          cache-to: type=local,mode=max,enable=true,target=/var/cache/docker
+          cache-from: type=gha # Wczytuje cache z poprzednich udanych uruchomień
+          cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
