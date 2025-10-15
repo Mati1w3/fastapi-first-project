@@ -6,8 +6,7 @@ from app.main import app
 from app.database import Base, get_db
 from app.config import settings
 from app.oauth2 import create_access_token
-from . import models
-
+from app import models
 #SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:4422@localhost:5432/testdb'
 SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}_test"
 
@@ -37,7 +36,22 @@ def client(session):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
 
-    
+
+@pytest.fixture
+def test_user2(client):
+    user_data = {
+        "name": "testuse2r",
+        "email": "xQ2Xe@ex2ample.com",
+        "password": "passwo2rd123"
+    }
+    result = client.post("/users/", json=user_data)
+    assert result.status_code == 201
+    new_user = result.json()
+    new_user["password"] = user_data["password"]
+    return new_user
+
+
+
 @pytest.fixture
 def test_user(client):
     user_data = {
@@ -89,11 +103,7 @@ def test_posts(test_user, session, test_user2):
             "owner_id": test_user2["id"]
         }
     ]
-    def create_post(post):
-        new_post = models.Post(**post)
-        session.add(new_post)
-        session.commit()
-        session.refresh(new_post)
-        return new_post
-    posts = list(map(create_post, posts_data))
+    session.add_all([models.Post(**post) for post in posts_data])
+    session.commit()
+    posts = session.query(models.Post).all()
     return posts
