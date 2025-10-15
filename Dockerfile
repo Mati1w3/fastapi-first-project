@@ -1,6 +1,6 @@
 FROM python:3.13.6
 #docker comments: docker build -t mati1w3/fastapi:latest .
-#docker run -p 8000:8000 mati1w3/fastapi:latest
+#docker run -p 8000:8000 mati1w3/fastapi:latestlll
 #docker-compose -f docker-compose-dev.yml up
 #docker exec -it "server_api name of container" bash
 #docker image ls 
